@@ -1,3 +1,8 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
 table.tic-tac-board {
    border-collapse: collapse;
    width: 100%;
@@ -6,6 +11,10 @@ table.tic-tac-board {
 
 table.tic-tac-board td {
     width: 33%;
+}
+
+table.tic-tac-board tr {
+    border-bottom: 0px;
 }
 
 #row-1 td.tic-tac-cell:nth-child(1) {
