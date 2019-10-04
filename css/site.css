@@ -53,3 +53,6 @@ table.tic-tac-board tr {
     border-left: 1px solid;
 }
 
+.player-move {
+    font-size: 100px;
+}
