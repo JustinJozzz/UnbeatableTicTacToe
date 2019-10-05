@@ -1,16 +1,89 @@
-function Player (name, icon, order) {
+function Player (id, name, icon, order) {
+    this.id = id;
     this.icon = icon;
     this.order = order;
     this.name = name;
-    this.moves = [];
 }
 
-function Game (player1, player2) {
+function Board (playerId, cpuId) {
+    var _this = this;
+
+    this.board = [
+        [-1,-1,-1],
+        [-1,-1,-1],
+        [-1,-1,-1]
+    ];
+    this.win = false;
+    this.tie = false;
+    this.value = 0;
+    this.moves = 0;
+    this.playerId = playerId;
+    this.cpuId = cpuId;
+
+    this.checkAvailable = function(row, col) {
+        if (_this.board[row][col] === -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    this.addMove = function(row, col, id) {
+        _this.board[row][col] = id;
+        _this.moves++;
+
+        if (_this.moves >= 5) {
+            // check rows
+            if (row === 0) {
+                _this.win = _this.board[row+1][col] === id && _this.board[row+2][col] === id;
+            } else if (row === 1) {
+                _this.win = _this.board[row-1][col] === id && _this.board[row+1][col] === id;
+            } else if (row === 2) {
+                _this.win = _this.board[row-1][col] === id && _this.board[row-2][col] === id;
+            }
+
+            // check columns
+            if (!_this.win) {
+                if (col === 0) {
+                    _this.win = _this.board[row][col+1] === id && _this.board[row][col+2] === id;
+                } else if (col === 1) {
+                    _this.win = _this.board[row][col-1] === id && _this.board[row][col+1] === id;
+                } else if (col === 2) {
+                    _this.win = _this.board[row][col-1] === id && _this.board[row][col-2] === id;
+                }
+            }
+
+            // check diagonals
+            if (!_this.win && _this.board[1][1] === id) {
+                if (row === 0 && col === 0) {
+                    _this.win = _this.board[row+2][col+2] === id;
+                } else if (row === 0 && col === 2) {
+                    _this.win = _this.board[row+2][col-2] === id;
+                } else if (row === 1 && col === 1) {
+                    _this.win = (_this.board[row-1][col-1] === id && _this.board[row+1][col+1] === id) || (_this.board[row-1][col+1] === id && _this.board[row+1][col-1] === id);
+                } else if (row === 2 && col === 0) {
+                    _this.win = _this.board[row-2][col+2] === id;
+                } else if (row === 2 && col === 2) {
+                    _this.win = _this.board[row-2][col-2] === id;
+                }
+            }
+        }
+
+        if (_this.win) {
+            _this.value = (_this.cpuId === id) ? 1 : -1;
+        } else if (_this.moves === 9) {
+            _this.tie = true;
+        }
+    }
+}
+
+function Game (player1, player2, board) {
     var _this = this;
 
     this.turnPlayer = (player1.order < player2.order) ? player1 : player2;
     this.player1 = player1;
     this.player2 = player2;
+    this.board = board;
     this.state = 'play';
 
     this.nextTurn = function () {
@@ -22,81 +95,54 @@ function Game (player1, player2) {
     }
 
     this.takeTurn = function (move) {
-        _this.turnPlayer.moves.push(move);
+        _this.board.addMove(move[0], move[1], _this.turnPlayer.id);
     }
 
     this.reset = function () {
-        _this.player1.moves = [];
-        _this.player2.moves = [];
         _this.state = 'play';
+        _this.board = new Board(_this.player1.id, _this.player2.id);
     }
 
     this.checkAvailable = function (move) {
-        return _this.player1.moves.indexOf(move) === -1 && _this.player2.moves.indexOf(move) === -1;
+        return _this.board.checkAvailable(move[0], move[1]);
     }
 
     this.checkWin = function () {
-        if (_this.turnPlayer.moves.length >= 3) {
-            var diag1 = [];
-            var diag2 = [];
-
-            for (var i = 0; i <= 2; i++) {
-                var row = _this.turnPlayer.moves.filter(function(x) {
-                   return x[0] === i;
-                });
-
-                var col = _this.turnPlayer.moves.filter(function(x) {
-                    return x[1] === i;
-                });
-
-                if (row.length === 3 || col.length === 3) {
-                    return true;
-                }
-
-                if (_this.turnPlayer.moves.filter(function(x) { return x[0] === i && x[1] === i; }).length > 0) {
-                    diag1.push(_this.turnPlayer.moves.filter(function(x) { return x[0] === i && x[1] === i; })[0]);
-                }
-
-                if (_this.turnPlayer.moves.filter(function(x) { return x[0] === i && x[1] === Math.abs(i-2); }).length > 0) {
-                    diag2.push(_this.turnPlayer.moves.filter(function(x) { return x[0] === i && x[1] === Math.abs(i-2); })[0]);
-                }
-            }
-
-            if (diag1.length === 3 || diag2.length === 3) {
-                return true;
-            }
-        }
-
-        return false;
+       return _this.board.win;
     }
 
     this.checkTie = function () {
-        return this.turnPlayer.moves.length === 5;
+        return _this.board.tie;
     }
 }
 
-var player1 = new Player('Player1', 'close', 1);
-var player2 = new Player('CPU', 'panorama_fish_eye', 2);
-var game = new Game(player1, player2);
+var player1 = new Player(1, 'Player1', 'close', 1);
+var player2 = new Player(2, 'CPU', 'panorama_fish_eye', 2);
+var board = new Board(player1.id, player2.id);
+var game = new Game(player1, player2, board);
 
 $(function() {
     $('.tic-tac-cell').click(function() {
-        var move = $(this).data('pos');
+        var _this = this;
+        var move = $(_this).data('pos');
 
         if (game.state === 'play') {
             if (game.checkAvailable(move)) {
                 game.takeTurn(move);
-                $(this).html('<i class="material-icons player-move">' + game.turnPlayer.icon + '</i>');
+                $(_this).html('<i class="material-icons player-move">' + game.turnPlayer.icon + '</i>');
 
                 if (game.checkWin()) {
+                    console.log('win!');
                     game.state = 'over';
                     $('#game-message').html('<span class="green-text accent-3">' + game.turnPlayer.name + ' wins!</span>')
                 } else if (game.checkTie()) {
                     game.state = 'over';
+                    console.log('tie!');
                     $('#game-message').html('<span class="light-blue-text accent-4">It\'s a tie!</span>');
                 }
 
                 if (game.state === 'play') {
+                    console.log('next turn!');
                     game.nextTurn();
                     $('#game-message').text('');
                 } else {
