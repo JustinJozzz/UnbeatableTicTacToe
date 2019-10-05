@@ -1,6 +1,7 @@
-function Player (icon, order) {
+function Player (name, icon, order) {
     this.icon = icon;
     this.order = order;
+    this.name = name;
     this.moves = [];
 }
 
@@ -68,31 +69,34 @@ function Game (player1, player2) {
     }
 }
 
-var player1 = new Player('close', 1);
-var player2 = new Player('panorama_fish_eye', 2);
+var player1 = new Player('Player1', 'close', 1);
+var player2 = new Player('CPU', 'panorama_fish_eye', 2);
 var game = new Game(player1, player2);
 
 $(function() {
     $('.tic-tac-cell').click(function() {
         var move = $(this).data('pos');
 
-        if (game.state === 'play' && game.checkAvailable(move)) {
-            game.takeTurn(move);
-            $(this).html('<i class="material-icons player-move">' + game.turnPlayer.icon + '</i>');
+        if (game.state === 'play') {
+            if (game.checkAvailable(move)) {
+                game.takeTurn(move);
+                $(this).html('<i class="material-icons player-move">' + game.turnPlayer.icon + '</i>');
 
-            if (game.checkWin()) {
-                game.state = 'over';
-                console.log(game.turnPlayer + ' wins!');
-            } else if (game.checkTie()) {
-                game.state = 'over';
-                console.log('It\'s a tie!');
-            }
+                if (game.checkWin()) {
+                    game.state = 'over';
+                    $('#game-message').text(game.turnPlayer.name + ' wins!')
+                } else if (game.checkTie()) {
+                    game.state = 'over';
+                    $('#game-message').text('It\'s a tie!');
+                }
 
-            if (game.state === 'play') {
-                game.nextTurn();
+                if (game.state === 'play') {
+                    game.nextTurn();
+                    $('#game-message').text('');
+                }
+            } else {
+                $('#game-message').text('Space already occupied!')
             }
-        } else {
-            console.log('Space Already Taken');
         }
     });
 });
