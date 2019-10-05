@@ -23,7 +23,7 @@ function TreeNode (board, nextPlayerId, moves) {
         return rslt;
     }
 
-    this.addMove = function(row, col, id) {
+    this.addMove = function(row, col, id, cpuId) {
         _this.board[row][col] = id;
         _this.moves++;
 
@@ -65,7 +65,7 @@ function TreeNode (board, nextPlayerId, moves) {
         }
 
         if (_this.win) {
-            _this.value = (_this.cpuId === id) ? 1 : -1;
+            _this.value = (cpuId === id) ? 1 : -1;
         } else if (_this.moves === 9) {
             _this.tie = true;
         }
@@ -83,7 +83,7 @@ function buildTree(game) {
             var moves = childStack[childStack.length - 1].getOpenMoves()
             for (var i = 0; i < moves.length; i++) {
                 var newNode = new TreeNode(childStack[childStack.length - 1].board, childStack[childStack.length - 1].nextPlayerId, childStack[childStack.length - 1].moves);
-                newNode.addMove(moves[i][0], moves[i][1], newNode.nextPlayerId);
+                newNode.addMove(moves[i][0], moves[i][1], newNode.nextPlayerId, game.player2.id);
                 if (newNode.nextPlayerId === game.player1.id) {
                     newNode.nextPlayerId = game.player2.id;
                 } else {
