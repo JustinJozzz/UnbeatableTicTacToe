@@ -123,6 +123,7 @@ var game = new Game(player1, player2, board);
 var miniMax = new MiniMax(game);
 
 $(function() {
+    console.log(miniMax.getNextMove());
     $('.tic-tac-cell').click(function() {
         var _this = this;
         var move = $(_this).data('pos');

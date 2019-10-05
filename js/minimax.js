@@ -26,6 +26,7 @@ function TreeNode (board, nextPlayerId, moves) {
     this.addMove = function(row, col, id, cpuId) {
         _this.board[row][col] = id;
         _this.moves++;
+        _this.lastMove = [row, col];
 
         if (_this.moves >= 5) {
             // check rows
@@ -112,8 +113,18 @@ function MiniMax (game) {
         return root;
     }
 
-
     this.tree = _this.buildTree(game);
+
+    this.getNextMove = function() {
+        var minIndex = -1;
+        var minValue = 9999999999;
+        for (var i = 0; i < this.tree.children.length; i++) {
+            if (this.tree.children[i].value < minValue) {
+                minValue = this.tree.children[i].value;
+                minIndex = i;
+            }
+        }
+
+        return this.tree.children[minIndex].lastMove;
+    }
 }
-
-
