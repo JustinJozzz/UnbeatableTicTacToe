@@ -90,10 +90,10 @@ $(function() {
 
                 if (game.checkWin()) {
                     game.state = 'over';
-                    $('#game-message').text(game.turnPlayer.name + ' wins!')
+                    $('#game-message').html('<span class="green-text accent-3">' + game.turnPlayer.name + ' wins!</span>')
                 } else if (game.checkTie()) {
                     game.state = 'over';
-                    $('#game-message').text('It\'s a tie!');
+                    $('#game-message').html('<span class="light-blue-text accent-4">It\'s a tie!</span>');
                 }
 
                 if (game.state === 'play') {
@@ -104,7 +104,7 @@ $(function() {
                     $('#reset').addClass('show');
                 }
             } else {
-                $('#game-message').text('Space already occupied!')
+                $('#game-message').html('<span class="yellow-text accent-4">Space already occupied!</span>')
             }
         }
     });
