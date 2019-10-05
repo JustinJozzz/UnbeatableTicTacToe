@@ -62,6 +62,10 @@ function Game (player1, player2) {
 
         return false;
     }
+
+    this.checkTie = function () {
+        return this.turnPlayer.moves.length === 5;
+    }
 }
 
 var player1 = new Player('close', 1);
@@ -77,8 +81,11 @@ $(function() {
             $(this).html('<i class="material-icons player-move">' + game.turnPlayer.icon + '</i>');
 
             if (game.checkWin()) {
-                game.state = 'win';
+                game.state = 'over';
                 console.log(game.turnPlayer + ' wins!');
+            } else if (game.checkTie()) {
+                game.state = 'over';
+                console.log('It\'s a tie!');
             }
 
             if (game.state === 'play') {
