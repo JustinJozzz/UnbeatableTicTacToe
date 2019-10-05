@@ -4,7 +4,7 @@ function TreeNode (board, nextPlayerId, moves) {
     this.board = $.extend(true, [], board);
     this.nextPlayerId = nextPlayerId;
     this.moves = moves;
-    this.value = null;
+    this.value = 0;
     this.win = false;
     this.tie = false;
     this.children = [];
@@ -72,41 +72,48 @@ function TreeNode (board, nextPlayerId, moves) {
     }
 }
 
-function buildTree(game) {
-    var root = new TreeNode(game.board.board, game.turnPlayer.id, game.board.moves);
-    var parentStack = [ root ];
-    var childStack = [];
+function MiniMax (game) {
+    var _this = this;
 
-    while (parentStack.length !== 0) {
-        childStack.push(parentStack.pop());
-        if (!childStack[childStack.length - 1].win && !childStack[childStack.length - 1].tie) {
-            var moves = childStack[childStack.length - 1].getOpenMoves()
-            for (var i = 0; i < moves.length; i++) {
-                var newNode = new TreeNode(childStack[childStack.length - 1].board, childStack[childStack.length - 1].nextPlayerId, childStack[childStack.length - 1].moves);
-                newNode.addMove(moves[i][0], moves[i][1], newNode.nextPlayerId, game.player2.id);
-                if (newNode.nextPlayerId === game.player1.id) {
-                    newNode.nextPlayerId = game.player2.id;
-                } else {
-                    newNode.nextPlayerId = game.player1.id;
+    this.buildTree = function(game) {
+        var root = new TreeNode(game.board.board, game.turnPlayer.id, game.board.moves);
+        var parentStack = [ root ];
+        var childStack = [];
+
+        while (parentStack.length !== 0) {
+            childStack.push(parentStack.pop());
+            if (!childStack[childStack.length - 1].win && !childStack[childStack.length - 1].tie) {
+                var moves = childStack[childStack.length - 1].getOpenMoves()
+                for (var i = 0; i < moves.length; i++) {
+                    var newNode = new TreeNode(childStack[childStack.length - 1].board, childStack[childStack.length - 1].nextPlayerId, childStack[childStack.length - 1].moves);
+                    newNode.addMove(moves[i][0], moves[i][1], newNode.nextPlayerId, game.player2.id);
+                    if (newNode.nextPlayerId === game.player1.id) {
+                        newNode.nextPlayerId = game.player2.id;
+                    } else {
+                        newNode.nextPlayerId = game.player1.id;
+                    }
+
+                    childStack[childStack.length - 1].children.push(newNode);
+                    parentStack.push(newNode);
                 }
+            }
 
-                childStack[childStack.length - 1].children.push(newNode);
-                parentStack.push(newNode);
+        }
+
+        while (childStack.length !== 0) {
+            var currNode = childStack.pop();
+            if (!currNode.tie && !currNode.win) {
+                for (var i = 0; i < currNode.children.length; i++) {
+                    currNode.value += currNode.children[i].value;
+                }
             }
         }
 
+        return root;
     }
 
-    while (childStack.length !== 0) {
-        var currNode = childStack.pop();
-        if (currNode.board.tie || currNode.board.win) {
-            currNode.value = currNode.board.value;
-        } else {
-            for (var i = 0; i < currNode.children.length; i++) {
-                currNode.value += currNode.children[i].value;
-            }
-        }
-    }
 
-    return root;
+    this.tree = _this.buildTree(game);
 }
+
+

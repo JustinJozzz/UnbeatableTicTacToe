@@ -120,9 +120,9 @@ var player1 = new Player(1, 'Player1', 'close', 1);
 var player2 = new Player(2, 'CPU', 'panorama_fish_eye', 2);
 var board = new Board(player1.id, player2.id);
 var game = new Game(player1, player2, board);
+var miniMax = new MiniMax(game);
 
 $(function() {
-    var tree = buildTree(game);
     $('.tic-tac-cell').click(function() {
         var _this = this;
         var move = $(_this).data('pos');
