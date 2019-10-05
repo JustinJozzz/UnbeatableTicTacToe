@@ -7,6 +7,7 @@ table.tic-tac-board {
    border-collapse: collapse;
    width: 100%;
    height: 30%;
+   min-height: 350px;
 }
 
 table.tic-tac-board td {
@@ -56,4 +57,12 @@ table.tic-tac-board tr {
 .player-move {
     font-size: 100px;
     user-select: none;
+}
+
+#reset.hide {
+    display: none;
+}
+
+#reset.show {
+    display: inline;
 }

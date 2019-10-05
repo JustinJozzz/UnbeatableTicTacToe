@@ -25,6 +25,12 @@ function Game (player1, player2) {
         _this.turnPlayer.moves.push(move);
     }
 
+    this.reset = function () {
+        _this.player1.moves = [];
+        _this.player2.moves = [];
+        _this.state = 'play';
+    }
+
     this.checkAvailable = function (move) {
         return _this.player1.moves.indexOf(move) === -1 && _this.player2.moves.indexOf(move) === -1;
     }
@@ -93,10 +99,21 @@ $(function() {
                 if (game.state === 'play') {
                     game.nextTurn();
                     $('#game-message').text('');
+                } else {
+                    $('#reset').removeClass('hide');
+                    $('#reset').addClass('show');
                 }
             } else {
                 $('#game-message').text('Space already occupied!')
             }
         }
+    });
+
+    $('#reset').click(function () {
+        game.reset();
+        $('.tic-tac-board td').html('');
+        $('#game-message').text('');
+        $('#reset').addClass('hide');
+        $('#reset').removeClass('show');
     });
 });
