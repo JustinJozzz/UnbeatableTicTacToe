@@ -122,6 +122,7 @@ var board = new Board(player1.id, player2.id);
 var game = new Game(player1, player2, board);
 
 $(function() {
+    var tree = buildTree(game);
     $('.tic-tac-cell').click(function() {
         var _this = this;
         var move = $(_this).data('pos');
