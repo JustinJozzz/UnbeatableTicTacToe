@@ -100,6 +100,7 @@ function Game (player1, player2, board) {
 
     this.reset = function () {
         _this.state = 'play';
+        _this.turnPlayer = (player1.order < player2.order) ? player1 : player2;
         _this.board = new Board(_this.player1.id, _this.player2.id);
     }
 
@@ -160,12 +161,13 @@ $(function() {
         if (game.state === 'play') {
             var cpuMove = miniMax.getNextMove();
             var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
-            updateBoard(miniMax.getNextMove(), targetElement);
+            updateBoard(cpuMove, targetElement);
         }
     });
 
     $('#reset').click(function () {
         game.reset();
+        miniMax.reset();
         $('.tic-tac-board td').html('');
         $('#game-message').text('');
         $('#reset').addClass('hide');

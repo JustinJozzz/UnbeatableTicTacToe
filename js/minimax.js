@@ -66,7 +66,7 @@ function TreeNode (board, nextPlayerId, moves) {
         }
 
         if (_this.win) {
-            _this.value = (cpuId === id) ? 1 : -1;
+            _this.value = (cpuId === id) ? 100 - _this.moves : -100 + _this.moves;
         } else if (_this.moves === 9) {
             _this.tie = true;
         }
@@ -103,9 +103,31 @@ function MiniMax (game) {
 
         while (childStack.length !== 0) {
             var currNode = childStack.pop();
+            var maximize = false;
+            if (currNode.nextPlayerId === game.player2.id) {
+                maximize = true;
+            }
             if (!currNode.tie && !currNode.win) {
-                for (var i = 0; i < currNode.children.length; i++) {
-                    currNode.value += currNode.children[i].value;
+                if (maximize) {
+                    var maxVal = currNode.children[0].value;
+
+                    for (var i = 0; i < currNode.children.length; i++) {
+                        if (currNode.children[i].value > maxVal) {
+                            maxVal = currNode.children[i].value;
+                        }
+                    }
+
+                    currNode.value = maxVal;
+                } else {
+                    var minVal = currNode.children[0].value;
+
+                    for (var i = 0; i < currNode.children.length; i++) {
+                        if (currNode.children[i].value < minVal) {
+                            minVal = currNode.children[i].value;
+                        }
+                    }
+
+                    currNode.value = minVal;
                 }
             }
         }
@@ -114,6 +136,7 @@ function MiniMax (game) {
     }
 
     this.tree = _this.buildTree(game);
+    this.root = _this.tree;
 
     this.getNextMove = function() {
         var maxIndex = -1;
@@ -124,7 +147,6 @@ function MiniMax (game) {
                 maxIndex = i;
             }
         }
-
         return this.tree.children[maxIndex].lastMove;
     }
 
@@ -135,5 +157,9 @@ function MiniMax (game) {
                 break;
             }
         }
+    }
+
+    this.reset = function() {
+        this.tree = this.root;
     }
 }
