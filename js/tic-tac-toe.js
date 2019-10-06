@@ -152,8 +152,9 @@ var game;
 var miniMax;
 var modalOptions = {
     onCloseEnd: function() {
-        player1 = new Player(1, $('#playerName').val(), 'close', 1);
-        player2 = new Player(2, 'CPU', 'panorama_fish_eye', 2);
+        var first = $('#order').prop('checked');
+        player1 = new Player(1, $('#playerName').val(), 'close', (first) ? 1 : 2);
+        player2 = new Player(2, 'CPU', 'panorama_fish_eye', (first) ? 2 : 1);
         board = new Board(player1.id, player2.id);
         game = new Game(player1, player2, board);
         miniMax = new MiniMax(game);
