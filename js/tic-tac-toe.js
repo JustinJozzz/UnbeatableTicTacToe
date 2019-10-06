@@ -187,5 +187,6 @@ $(function() {
     $('.modal').modal(modalOptions);
     $('.modal').modal('open');
     $('#playerName').val('Player1');
+    M.updateTextFields();
     $('#preloader-overlay,#preloader').show();
 });
