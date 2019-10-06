@@ -116,15 +116,24 @@ function MiniMax (game) {
     this.tree = _this.buildTree(game);
 
     this.getNextMove = function() {
-        var minIndex = -1;
-        var minValue = 9999999999;
+        var maxIndex = -1;
+        var maxValue = -99999999;
         for (var i = 0; i < this.tree.children.length; i++) {
-            if (this.tree.children[i].value < minValue) {
-                minValue = this.tree.children[i].value;
-                minIndex = i;
+            if (this.tree.children[i].value > maxValue) {
+                maxValue = this.tree.children[i].value;
+                maxIndex = i;
             }
         }
 
-        return this.tree.children[minIndex].lastMove;
+        return this.tree.children[maxIndex].lastMove;
+    }
+
+    this.moveToNode = function(move) {
+        for (var i = 0; i < this.tree.children.length; i++) {
+            if (this.tree.children[i].lastMove[0] === move[0] && this.tree.children[i].lastMove[1] === move[1]) {
+                this.tree = this.tree.children[i];
+                break;
+            }
+        }
     }
 }

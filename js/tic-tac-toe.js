@@ -122,38 +122,45 @@ var board = new Board(player1.id, player2.id);
 var game = new Game(player1, player2, board);
 var miniMax = new MiniMax(game);
 
+function updateBoard(move, element) {
+    if (game.state === 'play') {
+        if (game.checkAvailable(move)) {
+            game.takeTurn(move);
+            miniMax.moveToNode(move);
+            $(element).html('<i class="material-icons player-move">' + game.turnPlayer.icon + '</i>');
+
+            if (game.checkWin()) {
+                game.state = 'over';
+                $('#game-message').html('<span class="green-text accent-3">' + game.turnPlayer.name + ' wins!</span>')
+            } else if (game.checkTie()) {
+                game.state = 'over';
+                $('#game-message').html('<span class="light-blue-text accent-4">It\'s a tie!</span>');
+            }
+
+            if (game.state === 'play') {
+                game.nextTurn();
+                $('#game-message').text('');
+            } else {
+                $('#reset').removeClass('hide');
+                $('#reset').addClass('show');
+            }
+        } else {
+            $('#game-message').html('<span class="yellow-text accent-4">Space already occupied!</span>')
+        }
+    }
+}
+
 $(function() {
-    console.log(miniMax.getNextMove());
     $('.tic-tac-cell').click(function() {
         var _this = this;
         var move = $(_this).data('pos');
 
+        updateBoard(move, _this);
+
         if (game.state === 'play') {
-            if (game.checkAvailable(move)) {
-                game.takeTurn(move);
-                $(_this).html('<i class="material-icons player-move">' + game.turnPlayer.icon + '</i>');
-
-                if (game.checkWin()) {
-                    console.log('win!');
-                    game.state = 'over';
-                    $('#game-message').html('<span class="green-text accent-3">' + game.turnPlayer.name + ' wins!</span>')
-                } else if (game.checkTie()) {
-                    game.state = 'over';
-                    console.log('tie!');
-                    $('#game-message').html('<span class="light-blue-text accent-4">It\'s a tie!</span>');
-                }
-
-                if (game.state === 'play') {
-                    console.log('next turn!');
-                    game.nextTurn();
-                    $('#game-message').text('');
-                } else {
-                    $('#reset').removeClass('hide');
-                    $('#reset').addClass('show');
-                }
-            } else {
-                $('#game-message').html('<span class="yellow-text accent-4">Space already occupied!</span>')
-            }
+            var cpuMove = miniMax.getNextMove();
+            var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
+            updateBoard(miniMax.getNextMove(), targetElement);
         }
     });
 
