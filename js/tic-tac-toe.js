@@ -117,12 +117,6 @@ function Game (player1, player2, board) {
     }
 }
 
-var player1 = new Player(1, 'Player1', 'close', 1);
-var player2 = new Player(2, 'CPU', 'panorama_fish_eye', 2);
-var board = new Board(player1.id, player2.id);
-var game = new Game(player1, player2, board);
-var miniMax = new MiniMax(game);
-
 function updateBoard(move, element) {
     if (game.state === 'play') {
         if (game.checkAvailable(move)) {
@@ -151,25 +145,45 @@ function updateBoard(move, element) {
     }
 }
 
+var player1;
+var player2;
+var board;
+var game;
+var miniMax;
+var modalOptions = {
+    onCloseEnd: function() {
+        player1 = new Player(1, $('#playerName').val(), 'close', 1);
+        player2 = new Player(2, 'CPU', 'panorama_fish_eye', 2);
+        board = new Board(player1.id, player2.id);
+        game = new Game(player1, player2, board);
+        miniMax = new MiniMax(game);
+        $('.tic-tac-cell').click(function() {
+            var _this = this;
+            var move = $(_this).data('pos');
+            updateBoard(move, _this);
+
+            if (game.state === 'play' && game.turnPlayer.id === 2) {
+                var cpuMove = miniMax.getNextMove();
+                var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
+                updateBoard(cpuMove, targetElement);
+            }
+        });
+
+        $('#reset').click(function () {
+            game.reset();
+            miniMax.reset();
+            $('.tic-tac-board td').html('');
+            $('#game-message').text('');
+            $('#reset').addClass('hide');
+            $('#reset').removeClass('show');
+        });
+    }
+};
+
+
+
 $(function() {
-    $('.tic-tac-cell').click(function() {
-        var _this = this;
-        var move = $(_this).data('pos');
-        updateBoard(move, _this);
-
-        if (game.state === 'play' && game.turnPlayer.id === 2) {
-            var cpuMove = miniMax.getNextMove();
-            var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
-            updateBoard(cpuMove, targetElement);
-        }
-    });
-
-    $('#reset').click(function () {
-        game.reset();
-        miniMax.reset();
-        $('.tic-tac-board td').html('');
-        $('#game-message').text('');
-        $('#reset').addClass('hide');
-        $('#reset').removeClass('show');
-    });
+    $('.modal').modal(modalOptions);
+    $('.modal').modal('open');
+    $('#playerName').val('Player1');
 });
