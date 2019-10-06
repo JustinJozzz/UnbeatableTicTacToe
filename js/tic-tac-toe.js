@@ -158,7 +158,7 @@ $(function() {
 
         updateBoard(move, _this);
 
-        if (game.state === 'play') {
+        if (game.state === 'play' && game.turnPlayer.id === 2) {
             var cpuMove = miniMax.getNextMove();
             var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
             updateBoard(cpuMove, targetElement);
