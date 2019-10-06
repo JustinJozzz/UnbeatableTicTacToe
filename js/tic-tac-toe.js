@@ -177,6 +177,7 @@ var modalOptions = {
             $('#reset').addClass('hide');
             $('#reset').removeClass('show');
         });
+        $('#preloader-overlay,#preloader').hide();
     }
 };
 
@@ -186,4 +187,5 @@ $(function() {
     $('.modal').modal(modalOptions);
     $('.modal').modal('open');
     $('#playerName').val('Player1');
+    $('#preloader-overlay,#preloader').show();
 });
