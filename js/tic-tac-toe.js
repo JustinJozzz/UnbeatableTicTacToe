@@ -155,7 +155,6 @@ $(function() {
     $('.tic-tac-cell').click(function() {
         var _this = this;
         var move = $(_this).data('pos');
-
         updateBoard(move, _this);
 
         if (game.state === 'play' && game.turnPlayer.id === 2) {

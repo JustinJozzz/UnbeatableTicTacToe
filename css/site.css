@@ -3,21 +3,31 @@ html, body {
     height: 100%;
 }
 
+#main {
+    height: 100%;
+}
+
+#board {
+    height: 40%;
+}
+
 table.tic-tac-board {
    margin-top: 5px;
+   table-layout: fixed;
    border-collapse: collapse;
-   width: 100%;
-   height: 30%;
-   min-height: 425px; 
+   height: 100%;
 }
 
 table.tic-tac-board td {
     width: 33%;
+    height: 33%;
+    /*max-width:110px;*/
 }
+
 
 table.tic-tac-board tr {
     border-bottom: 0px;
-    height: 33%;
+    /*height: 33%;*/
 }
 
 #row-1 td.tic-tac-cell:nth-child(1) {
