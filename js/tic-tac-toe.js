@@ -138,6 +138,9 @@ function updateBoard(move, element) {
             } else {
                 $('#reset').removeClass('hide');
                 $('#reset').addClass('show');
+                $('#new-game').removeClass('hide');
+                $('#new-game').addClass('show');
+
             }
         } else {
             $('#game-message').html('<span class="yellow-text accent-4">Space already occupied!</span>')
@@ -150,6 +153,7 @@ var player2;
 var board;
 var game;
 var miniMax;
+var clickEventsSet = false;
 var modalOptions = {
     onCloseEnd: function() {
         var second = $('#order').prop('checked');
@@ -158,32 +162,49 @@ var modalOptions = {
         board = new Board(player1.id, player2.id);
         game = new Game(player1, player2, board);
         miniMax = new MiniMax(game);
-        $('.tic-tac-cell').click(function() {
-            var _this = this;
-            var move = $(_this).data('pos');
-            updateBoard(move, _this);
 
-            if (game.state === 'play' && game.turnPlayer.id === 2) {
-                var cpuMove = miniMax.getNextMove();
-                var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
-                updateBoard(cpuMove, targetElement);
-            }
-        });
+        if (!clickEventsSet) {
+            $('.tic-tac-cell').click(function() {
+                var _this = this;
+                var move = $(_this).data('pos');
+                updateBoard(move, _this);
 
-        $('#reset').click(function () {
-            game.reset();
-            miniMax.reset();
-            $('.tic-tac-board td').html('');
-            $('#game-message').text('');
-            $('#reset').addClass('hide');
-            $('#reset').removeClass('show');
-            if (game.turnPlayer.id === 2) {
-                var cpuMove = miniMax.getNextMove();
-                var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
-                updateBoard(cpuMove, targetElement);
-            }
+                if (game.state === 'play' && game.turnPlayer.id === 2) {
+                    var cpuMove = miniMax.getNextMove();
+                    var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
+                    updateBoard(cpuMove, targetElement);
+                }
+            });
 
-        });
+            $('#reset').click(function () {
+                game.reset();
+                miniMax.reset();
+                $('.tic-tac-board td').html('');
+                $('#game-message').text('');
+                $('#reset').addClass('hide');
+                $('#reset').removeClass('show');
+                $('#new-game').addClass('hide');
+                $('#new-game').removeClass('show');
+                if (game.turnPlayer.id === 2) {
+                    var cpuMove = miniMax.getNextMove();
+                    var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
+                    updateBoard(cpuMove, targetElement);
+                }
+            });
+
+            $('#new-game').click(function () {
+                $('.modal').modal('open');
+                $('#preloader-overlay,#preloader').show();
+                $('.tic-tac-board td').html('');
+                $('#game-message').text('');
+                $('#reset').addClass('hide');
+                $('#reset').removeClass('show');
+                $('#new-game').addClass('hide');
+                $('#new-game').removeClass('show');
+            });
+            clickEventsSet = true;
+        }
+
         $('#preloader-overlay,#preloader').hide();
 
         if (game.turnPlayer.id === 2) {
