@@ -177,8 +177,20 @@ var modalOptions = {
             $('#game-message').text('');
             $('#reset').addClass('hide');
             $('#reset').removeClass('show');
+            if (game.turnPlayer.id === 2) {
+                var cpuMove = miniMax.getNextMove();
+                var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
+                updateBoard(cpuMove, targetElement);
+            }
+
         });
         $('#preloader-overlay,#preloader').hide();
+
+        if (game.turnPlayer.id === 2) {
+            var cpuMove = miniMax.getNextMove();
+            var targetElement = 'td[data-pos="[' + cpuMove + ']"]';
+            updateBoard(cpuMove, targetElement);
+        }
     }
 };
 
